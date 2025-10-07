@@ -52,6 +52,3 @@ We used three datasets in this work and you can download the datasets from the f
 
 **DSB:** https://github.com/microsoft/dsb
 
-
-
-If you already have a trained demonstration selector in ```src/simcse_models/```, simply run ```python src/LLM_R2.py``` at inference time
