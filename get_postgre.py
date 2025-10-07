@@ -4,6 +4,9 @@
 import psycopg2
 import json
 
+USER = 'postgres'
+PASSWORD = 'your_password'
+
 
 def get_postgres(db_id, test_query):
     # with open('data/schemas/' + db_id + '.json', 'r') as f_sche:
@@ -16,8 +19,8 @@ def get_postgres(db_id, test_query):
     pg_conn = psycopg2.connect(host="localhost",
         port="5432",
         database=db_id,
-        user="postgres",
-        password="19981212lzdhMJK"
+        user=USER,
+        password=PASSWORD
 
     )
     # disable_query_cache(pg_conn)
@@ -58,8 +61,8 @@ def get_pg_tables(db_id):
         host="localhost",
         port="5432",
         database=db_id,
-        user="postgres",
-        password="19981212lzdhMJK"
+        user=USER,
+        password=PASSWORD
     )
     # disable_query_cache(pg_conn)
     pg_cursor = pg_conn.cursor()
