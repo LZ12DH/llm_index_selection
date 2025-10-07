@@ -1,0 +1,149 @@
+,Query_id,Query_text,Plan_dump
+0,19,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+sum(l_extendedprice* (1 - l_discount)) as revenue
+from
+lineitem,
+part
+where
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#41'
+and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+and l_quantity >= 3 and l_quantity <= 3 + 10
+and p_size between 1 and 5
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#23'
+and p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+and l_quantity >= 13 and l_quantity <= 13 + 10
+and p_size between 1 and 10
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#53'
+and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+and l_quantity >= 20 and l_quantity <= 20 + 10
+and p_size between 1 and 15
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+) ;
+-- $ID$
+-- TPC-H/TPC-R Potential Part Promotion ","{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953627.86, 'Total Cost': 1953627.88, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953627.64, 'Total Cost': 1953627.85, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1952627.64, 'Total Cost': 1952627.65, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 76401.88, 'Total Cost': 1952624.22, 'Plan Rows': 456, 'Plan Width': 12, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_partkey = part.p_partkey)', 'Join Filter': '(((part.p_brand = \'Brand#41\'::bpchar) AND (part.p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'3\'::numeric) AND (lineitem.l_quantity <= \'13\'::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = \'Brand#23\'::bpchar) AND (part.p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (lineitem.l_quantity >= \'13\'::numeric) AND (lineitem.l_quantity <= \'23\'::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = \'Brand#53\'::bpchar) AND (part.p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'20\'::numeric) AND (lineitem.l_quantity <= \'30\'::numeric) AND (part.p_size <= 15)))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1874399.7, 'Plan Rows': 479393, 'Plan Width': 21, 'Filter': '((l_shipmode = ANY (\'{AIR,""AIR REG""}\'::bpchar[])) AND (l_shipinstruct = \'DELIVER IN PERSON\'::bpchar) AND (((l_quantity >= \'3\'::numeric) AND (l_quantity <= \'13\'::numeric)) OR ((l_quantity >= \'13\'::numeric) AND (l_quantity <= \'23\'::numeric)) OR ((l_quantity >= \'20\'::numeric) AND (l_quantity <= \'30\'::numeric))))', 'parent': 3, 'ID': 4}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 76377.36, 'Total Cost': 76377.36, 'Plan Rows': 1962, 'Plan Width': 30, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 76377.36, 'Plan Rows': 1962, 'Plan Width': 30, 'Filter': '((p_size >= 1) AND (((p_brand = \'Brand#41\'::bpchar) AND (p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (p_size <= 5)) OR ((p_brand = \'Brand#23\'::bpchar) AND (p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (p_size <= 10)) OR ((p_brand = \'Brand#53\'::bpchar) AND (p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (p_size <= 15))))', 'parent': 5, 'ID': 6}], 'parent': 3, 'ID': 5, 'left': 6}], 'parent': 2, 'ID': 3, 'left': 4, 'right': 5}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+1,19,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+sum(l_extendedprice* (1 - l_discount)) as revenue
+from
+lineitem,
+part
+where
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#34'
+and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+and l_quantity >= 4 and l_quantity <= 4 + 10
+and p_size between 1 and 5
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#32'
+and p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+and l_quantity >= 16 and l_quantity <= 16 + 10
+and p_size between 1 and 10
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#24'
+and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+and l_quantity >= 24 and l_quantity <= 24 + 10
+and p_size between 1 and 15
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+) ;
+-- $ID$
+-- TPC-H/TPC-R Potential Part Promotion ","{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953637.9, 'Total Cost': 1953637.91, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953637.67, 'Total Cost': 1953637.88, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1952637.67, 'Total Cost': 1952637.68, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 76402.42, 'Total Cost': 1952634.16, 'Plan Rows': 468, 'Plan Width': 12, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_partkey = part.p_partkey)', 'Join Filter': '(((part.p_brand = \'Brand#34\'::bpchar) AND (part.p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'4\'::numeric) AND (lineitem.l_quantity <= \'14\'::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = \'Brand#32\'::bpchar) AND (part.p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (lineitem.l_quantity >= \'16\'::numeric) AND (lineitem.l_quantity <= \'26\'::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = \'Brand#24\'::bpchar) AND (part.p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'24\'::numeric) AND (lineitem.l_quantity <= \'34\'::numeric) AND (part.p_size <= 15)))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1874399.7, 'Plan Rows': 481710, 'Plan Width': 21, 'Filter': '((l_shipmode = ANY (\'{AIR,""AIR REG""}\'::bpchar[])) AND (l_shipinstruct = \'DELIVER IN PERSON\'::bpchar) AND (((l_quantity >= \'4\'::numeric) AND (l_quantity <= \'14\'::numeric)) OR ((l_quantity >= \'16\'::numeric) AND (l_quantity <= \'26\'::numeric)) OR ((l_quantity >= \'24\'::numeric) AND (l_quantity <= \'34\'::numeric))))', 'parent': 3, 'ID': 4}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 76377.36, 'Total Cost': 76377.36, 'Plan Rows': 2005, 'Plan Width': 30, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 76377.36, 'Plan Rows': 2005, 'Plan Width': 30, 'Filter': '((p_size >= 1) AND (((p_brand = \'Brand#34\'::bpchar) AND (p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (p_size <= 5)) OR ((p_brand = \'Brand#32\'::bpchar) AND (p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (p_size <= 10)) OR ((p_brand = \'Brand#24\'::bpchar) AND (p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (p_size <= 15))))', 'parent': 5, 'ID': 6}], 'parent': 3, 'ID': 5, 'left': 6}], 'parent': 2, 'ID': 3, 'left': 4, 'right': 5}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+2,11,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+ps_partkey,
+sum(ps_supplycost * ps_availqty) as value
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'ETHIOPIA'
+group by
+ps_partkey having
+sum(ps_supplycost * ps_availqty) > (
+select
+sum(ps_supplycost * ps_availqty) * 0.0000100000
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'ETHIOPIA'
+)
+order by
+value desc ;
+-- $ID$
+-- TPC-H/TPC-R Shipping Modes and Order Priority ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 517534.29, 'Total Cost': 517800.95, 'Plan Rows': 106664, 'Plan Width': 36, 'Sort Key': ['(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) DESC'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parent Relationship': 'InitPlan', 'Subplan Name': 'InitPlan 1 (returns $1)', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.91, 'Total Cost': 226081.92, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.68, 'Total Cost': 226081.89, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 225081.68, 'Total Cost': 225081.69, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 10, 'Inner Unique': False, 'Hash Cond': '(partsupp_1.ps_suppkey = supplier_1.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp_1', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 14, 'parent': 4, 'ID': 5}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier_1.s_nationkey = nation_1.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier_1', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 7, 'ID': 8}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation_1', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'ETHIOPIA'::bpchar)"", 'parent': 9, 'ID': 10}], 'parent': 7, 'ID': 9, 'left': 10}], 'parent': 6, 'ID': 7, 'left': 8, 'right': 9}], 'parent': 4, 'ID': 6, 'left': 7}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 6}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}, {'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 279625.48, 'Plan Rows': 106664, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Filter': '(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric)) > $1)', 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 272825.64, 'Plan Rows': 266660, 'Plan Width': 36, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 241046.43, 'Plan Rows': 133330, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 238046.51, 'Plan Rows': 133330, 'Plan Width': 14, 'Sort Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 14, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_suppkey = supplier.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 18, 'parent': 15, 'ID': 16}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier.s_nationkey = nation.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 18, 'ID': 19}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'ETHIOPIA'::bpchar)"", 'parent': 20, 'ID': 21}], 'parent': 18, 'ID': 20, 'left': 21}], 'parent': 17, 'ID': 18, 'left': 19, 'right': 20}], 'parent': 15, 'ID': 17, 'left': 18}], 'parent': 14, 'ID': 15, 'left': 16, 'right': 17}], 'parent': 13, 'ID': 14, 'left': 15}], 'parent': 12, 'ID': 13, 'left': 14}], 'parent': 11, 'ID': 12, 'left': 13}], 'parent': 0, 'ID': 11, 'left': 12}], 'parent': None, 'ID': 0, 'left': 1, 'right': 11}"
+3,11,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+ps_partkey,
+sum(ps_supplycost * ps_availqty) as value
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'KENYA'
+group by
+ps_partkey having
+sum(ps_supplycost * ps_availqty) > (
+select
+sum(ps_supplycost * ps_availqty) * 0.0000100000
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'KENYA'
+)
+order by
+value desc ;
+-- $ID$
+-- TPC-H/TPC-R Shipping Modes and Order Priority ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 517534.29, 'Total Cost': 517800.95, 'Plan Rows': 106664, 'Plan Width': 36, 'Sort Key': ['(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) DESC'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parent Relationship': 'InitPlan', 'Subplan Name': 'InitPlan 1 (returns $1)', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.91, 'Total Cost': 226081.92, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.68, 'Total Cost': 226081.89, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 225081.68, 'Total Cost': 225081.69, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 10, 'Inner Unique': False, 'Hash Cond': '(partsupp_1.ps_suppkey = supplier_1.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp_1', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 14, 'parent': 4, 'ID': 5}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier_1.s_nationkey = nation_1.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier_1', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 7, 'ID': 8}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation_1', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'KENYA'::bpchar)"", 'parent': 9, 'ID': 10}], 'parent': 7, 'ID': 9, 'left': 10}], 'parent': 6, 'ID': 7, 'left': 8, 'right': 9}], 'parent': 4, 'ID': 6, 'left': 7}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 6}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}, {'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 279625.48, 'Plan Rows': 106664, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Filter': '(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric)) > $1)', 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 272825.64, 'Plan Rows': 266660, 'Plan Width': 36, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 241046.43, 'Plan Rows': 133330, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 238046.51, 'Plan Rows': 133330, 'Plan Width': 14, 'Sort Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 14, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_suppkey = supplier.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 18, 'parent': 15, 'ID': 16}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier.s_nationkey = nation.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 18, 'ID': 19}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'KENYA'::bpchar)"", 'parent': 20, 'ID': 21}], 'parent': 18, 'ID': 20, 'left': 21}], 'parent': 17, 'ID': 18, 'left': 19, 'right': 20}], 'parent': 15, 'ID': 17, 'left': 18}], 'parent': 14, 'ID': 15, 'left': 16, 'right': 17}], 'parent': 13, 'ID': 14, 'left': 15}], 'parent': 12, 'ID': 13, 'left': 14}], 'parent': 11, 'ID': 12, 'left': 13}], 'parent': 0, 'ID': 11, 'left': 12}], 'parent': None, 'ID': 0, 'left': 1, 'right': 11}"

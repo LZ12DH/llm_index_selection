@@ -1,0 +1,375 @@
+,Query_id,Query_text,Plan_dump
+0,11,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+ps_partkey,
+sum(ps_supplycost * ps_availqty) as value
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'CANADA'
+group by
+ps_partkey having
+sum(ps_supplycost * ps_availqty) > (
+select
+sum(ps_supplycost * ps_availqty) * 0.0000100000
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'CANADA'
+)
+order by
+value desc ;
+-- $ID$
+-- TPC-H/TPC-R Shipping Modes and Order Priority ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 517534.29, 'Total Cost': 517800.95, 'Plan Rows': 106664, 'Plan Width': 36, 'Sort Key': ['(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) DESC'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parent Relationship': 'InitPlan', 'Subplan Name': 'InitPlan 1 (returns $1)', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.91, 'Total Cost': 226081.92, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.68, 'Total Cost': 226081.89, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 225081.68, 'Total Cost': 225081.69, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 10, 'Inner Unique': False, 'Hash Cond': '(partsupp_1.ps_suppkey = supplier_1.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp_1', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 14, 'parent': 4, 'ID': 5}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier_1.s_nationkey = nation_1.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier_1', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 7, 'ID': 8}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation_1', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'CANADA'::bpchar)"", 'parent': 9, 'ID': 10}], 'parent': 7, 'ID': 9, 'left': 10}], 'parent': 6, 'ID': 7, 'left': 8, 'right': 9}], 'parent': 4, 'ID': 6, 'left': 7}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 6}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}, {'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 279625.48, 'Plan Rows': 106664, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Filter': '(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric)) > $1)', 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 272825.64, 'Plan Rows': 266660, 'Plan Width': 36, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 241046.43, 'Plan Rows': 133330, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 238046.51, 'Plan Rows': 133330, 'Plan Width': 14, 'Sort Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 14, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_suppkey = supplier.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 18, 'parent': 15, 'ID': 16}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier.s_nationkey = nation.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 18, 'ID': 19}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'CANADA'::bpchar)"", 'parent': 20, 'ID': 21}], 'parent': 18, 'ID': 20, 'left': 21}], 'parent': 17, 'ID': 18, 'left': 19, 'right': 20}], 'parent': 15, 'ID': 17, 'left': 18}], 'parent': 14, 'ID': 15, 'left': 16, 'right': 17}], 'parent': 13, 'ID': 14, 'left': 15}], 'parent': 12, 'ID': 13, 'left': 14}], 'parent': 11, 'ID': 12, 'left': 13}], 'parent': 0, 'ID': 11, 'left': 12}], 'parent': None, 'ID': 0, 'left': 1, 'right': 11}"
+1,16,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+p_brand,
+p_type,
+p_size,
+count(distinct ps_suppkey) as supplier_cnt
+from
+partsupp,
+part
+where
+p_partkey = ps_partkey
+and p_brand <> 'Brand#35'
+and p_type not like 'SMALL PLATED%'
+and p_size in (1, 42, 8, 43, 37, 44, 21, 36)
+and ps_suppkey not in (
+select
+s_suppkey
+from
+supplier
+where
+s_comment like '%Customer%Complaints%'
+)
+group by
+p_brand,
+p_type,
+p_size
+order by
+supplier_cnt desc,
+p_brand,
+p_type,
+p_size ;
+-- $ID$
+-- TPC-H/TPC-R Small-Quantity-Order Revenue ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 432248.85, 'Total Cost': 432636.56, 'Plan Rows': 155084, 'Plan Width': 44, 'Sort Key': ['(count(DISTINCT partsupp.ps_suppkey)) DESC', 'part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Simple', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 335802.82, 'Total Cost': 414104.52, 'Plan Rows': 155084, 'Plan Width': 44, 'Group Key': ['part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 335802.82, 'Total Cost': 406484.81, 'Plan Rows': 606887, 'Plan Width': 40, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 334802.8, 'Total Cost': 335434.97, 'Plan Rows': 252870, 'Plan Width': 40, 'Sort Key': ['part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 67829.0, 'Total Cost': 305194.2, 'Plan Rows': 252870, 'Plan Width': 40, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_partkey = part.p_partkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 3466.03, 'Total Cost': 219517.74, 'Plan Rows': 1666629, 'Plan Width': 8, 'Filter': '(NOT (hashed SubPlan 1))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'SubPlan', 'Subplan Name': 'SubPlan 1', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 3466.0, 'Plan Rows': 10, 'Plan Width': 4, 'Filter': ""((s_comment)::text ~~ '%Customer%Complaints%'::text)"", 'parent': 5, 'ID': 6}], 'parent': 4, 'ID': 5, 'left': 6}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 61794.56, 'Total Cost': 61794.56, 'Plan Rows': 126433, 'Plan Width': 40, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 61794.56, 'Plan Rows': 126433, 'Plan Width': 40, 'Filter': ""((p_brand <> 'Brand#35'::bpchar) AND ((p_type)::text !~~ 'SMALL PLATED%'::text) AND (p_size = ANY ('{1,42,8,43,37,44,21,36}'::integer[])))"", 'parent': 7, 'ID': 8}], 'parent': 4, 'ID': 7, 'left': 8}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 7}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+2,8,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+o_year,
+sum(case
+when nation = 'INDONESIA' then volume
+else 0
+end) / sum(volume) as mkt_share
+from
+(
+select
+extract(year from o_orderdate) as o_year,
+l_extendedprice * (1 - l_discount) as volume,
+n2.n_name as nation
+from
+part,
+supplier,
+lineitem,
+orders,
+customer,
+nation n1,
+nation n2,
+region
+where
+p_partkey = l_partkey
+and s_suppkey = l_suppkey
+and l_orderkey = o_orderkey
+and o_custkey = c_custkey
+and c_nationkey = n1.n_nationkey
+and n1.n_regionkey = r_regionkey
+and r_name = 'ASIA'
+and s_nationkey = n2.n_nationkey
+and o_orderdate between date '1995-01-01' and date '1996-12-31'
+and p_type = 'STANDARD POLISHED BRASS'
+) as all_nations
+group by
+o_year
+order by
+o_year ;
+-- $ID$
+-- TPC-H/TPC-R Product Type Profit Measure ","{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1955785.01, 'Total Cost': 1956486.84, 'Plan Rows': 2406, 'Plan Width': 64, 'Group Key': ['(EXTRACT(year FROM orders.o_orderdate))'], 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1955785.01, 'Total Cost': 1956408.65, 'Plan Rows': 2406, 'Plan Width': 96, 'Workers Planned': 1, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1954785.0, 'Total Cost': 1955137.96, 'Plan Rows': 2406, 'Plan Width': 96, 'Group Key': ['(EXTRACT(year FROM orders.o_orderdate))'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1954785.0, 'Total Cost': 1954819.54, 'Plan Rows': 13816, 'Plan Width': 70, 'Sort Key': ['(EXTRACT(year FROM orders.o_orderdate))'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1950527.96, 'Total Cost': 1953834.87, 'Plan Rows': 13816, 'Plan Width': 70, 'Inner Unique': False, 'Hash Cond': '(supplier.s_nationkey = n2.n_nationkey)', 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1950526.4, 'Total Cost': 1953608.79, 'Plan Rows': 13816, 'Plan Width': 20, 'Inner Unique': False, 'Hash Cond': '(supplier.s_suppkey = lineitem.l_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 5, 'ID': 6}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 1950404.06, 'Total Cost': 1950404.06, 'Plan Rows': 9787, 'Plan Width': 20, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1905498.74, 'Total Cost': 1950404.06, 'Plan Rows': 9787, 'Plan Width': 20, 'Inner Unique': False, 'Hash Cond': '(customer.c_nationkey = n1.n_nationkey)', 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1905496.2, 'Total Cost': 1950120.18, 'Plan Rows': 48932, 'Plan Width': 24, 'Inner Unique': False, 'Hash Cond': '(customer.c_custkey = orders.o_custkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'customer', 'Alias': 'customer', 'Startup Cost': 0.0, 'Total Cost': 42076.52, 'Plan Rows': 624952, 'Plan Width': 8, 'parent': 9, 'ID': 10}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 1904884.55, 'Total Cost': 1904884.55, 'Plan Rows': 48932, 'Plan Width': 24, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1523283.11, 'Total Cost': 1904884.55, 'Plan Rows': 48932, 'Plan Width': 24, 'Inner Unique': False, 'Hash Cond': '(orders.o_orderkey = lineitem.l_orderkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'orders', 'Alias': 'orders', 'Startup Cost': 0.0, 'Total Cost': 354655.56, 'Plan Rows': 1909064, 'Plan Width': 12, 'Filter': ""((o_orderdate >= '1995-01-01'::date) AND (o_orderdate <= '1996-12-31'::date))"", 'parent': 12, 'ID': 13}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 1520341.76, 'Total Cost': 1520341.76, 'Plan Rows': 160188, 'Plan Width': 20, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 51447.53, 'Total Cost': 1520341.76, 'Plan Rows': 160188, 'Plan Width': 20, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_partkey = part.p_partkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1374494.57, 'Plan Rows': 24995257, 'Plan Width': 24, 'parent': 15, 'ID': 16}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 51378.28, 'Total Cost': 51378.28, 'Plan Rows': 5540, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 51378.28, 'Plan Rows': 5540, 'Plan Width': 4, 'Filter': ""((p_type)::text = 'STANDARD POLISHED BRASS'::text)"", 'parent': 17, 'ID': 18}], 'parent': 15, 'ID': 17, 'left': 18}], 'parent': 14, 'ID': 15, 'left': 16, 'right': 17}], 'parent': 12, 'ID': 14, 'left': 15}], 'parent': 11, 'ID': 12, 'left': 13, 'right': 14}], 'parent': 9, 'ID': 11, 'left': 12}], 'parent': 8, 'ID': 9, 'left': 10, 'right': 11}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 2.47, 'Total Cost': 2.47, 'Plan Rows': 5, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.07, 'Total Cost': 2.47, 'Plan Rows': 5, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(n1.n_regionkey = region.r_regionkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'n1', 'Startup Cost': 0.0, 'Total Cost': 1.25, 'Plan Rows': 25, 'Plan Width': 8, 'parent': 20, 'ID': 21}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.06, 'Total Cost': 1.06, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'region', 'Alias': 'region', 'Startup Cost': 0.0, 'Total Cost': 1.06, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(r_name = 'ASIA'::bpchar)"", 'parent': 22, 'ID': 23}], 'parent': 20, 'ID': 22, 'left': 23}], 'parent': 19, 'ID': 20, 'left': 21, 'right': 22}], 'parent': 8, 'ID': 19, 'left': 20}], 'parent': 7, 'ID': 8, 'left': 9, 'right': 19}], 'parent': 5, 'ID': 7, 'left': 8}], 'parent': 4, 'ID': 5, 'left': 6, 'right': 7}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.25, 'Total Cost': 1.25, 'Plan Rows': 25, 'Plan Width': 30, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'n2', 'Startup Cost': 0.0, 'Total Cost': 1.25, 'Plan Rows': 25, 'Plan Width': 30, 'parent': 24, 'ID': 25}], 'parent': 4, 'ID': 24, 'left': 25}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 24}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+3,18,"-- Function Query Definition
+-- Approved February 1998
+
+
+select
+c_name,
+c_custkey,
+o_orderkey,
+o_orderdate,
+o_totalprice,
+sum(l_quantity)
+from
+customer,
+orders,
+lineitem
+where
+o_orderkey in (
+select
+l_orderkey
+from
+lineitem
+group by
+l_orderkey having
+sum(l_quantity) > 315
+)
+and c_custkey = o_custkey
+and o_orderkey = l_orderkey
+group by
+c_name,
+c_custkey,
+o_orderkey,
+o_orderdate,
+o_totalprice
+order by
+o_totalprice desc,
+o_orderdate limit 100;
+-- $ID$
+-- TPC-H/TPC-R Discounted Revenue ","{'Node Type': 'Limit', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 6708552.79, 'Total Cost': 6708555.79, 'Plan Rows': 100, 'Plan Width': 71, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Simple', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 6708552.79, 'Total Cost': 6724350.55, 'Plan Rows': 526592, 'Plan Width': 71, 'Group Key': ['orders.o_totalprice', 'orders.o_orderdate', 'customer.c_name', 'customer.c_custkey', 'orders.o_orderkey'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 6708552.79, 'Total Cost': 6709869.27, 'Plan Rows': 526592, 'Plan Width': 44, 'Sort Key': ['orders.o_totalprice DESC', 'orders.o_orderdate', 'customer.c_name', 'customer.c_custkey', 'orders.o_orderkey'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 4100671.01, 'Total Cost': 6642308.4, 'Plan Rows': 526592, 'Plan Width': 44, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_orderkey = orders.o_orderkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1724428.16, 'Plan Rows': 59988616, 'Plan Width': 9, 'parent': 3, 'ID': 4}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 4097867.21, 'Total Cost': 4097867.21, 'Plan Rows': 131664, 'Plan Width': 43, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3459164.82, 'Total Cost': 4097867.21, 'Plan Rows': 131664, 'Plan Width': 43, 'Inner Unique': False, 'Hash Cond': '(orders.o_custkey = customer.c_custkey)', 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3380801.41, 'Total Cost': 4007360.41, 'Plan Rows': 131664, 'Plan Width': 24, 'Inner Unique': True, 'Hash Cond': '(orders.o_orderkey = lineitem_1.l_orderkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'orders', 'Alias': 'orders', 'Startup Cost': 0.0, 'Total Cost': 410901.7, 'Plan Rows': 14998970, 'Plan Width': 20, 'parent': 7, 'ID': 8}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3378640.61, 'Total Cost': 3378640.61, 'Plan Rows': 131664, 'Plan Width': 4, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3273303.23, 'Total Cost': 3377323.97, 'Plan Rows': 131664, 'Plan Width': 4, 'Group Key': ['lineitem_1.l_orderkey'], 'Filter': ""(sum(lineitem_1.l_quantity) > '315'::numeric)"", 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3273303.23, 'Total Cost': 3365474.24, 'Plan Rows': 789982, 'Plan Width': 36, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3272303.21, 'Total Cost': 3273290.69, 'Plan Rows': 394991, 'Plan Width': 36, 'Sort Key': ['lineitem_1.l_orderkey'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Hashed', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 2975753.22, 'Total Cost': 3224784.91, 'Plan Rows': 394991, 'Plan Width': 36, 'Group Key': ['lineitem_1.l_orderkey'], 'Planned Partitions': 32, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem_1', 'Startup Cost': 0.0, 'Total Cost': 1374494.57, 'Plan Rows': 24995257, 'Plan Width': 9, 'parent': 13, 'ID': 14}], 'parent': 12, 'ID': 13, 'left': 14}], 'parent': 11, 'ID': 12, 'left': 13}], 'parent': 10, 'ID': 11, 'left': 12}], 'parent': 9, 'ID': 10, 'left': 11}], 'parent': 7, 'ID': 9, 'left': 10}], 'parent': 6, 'ID': 7, 'left': 8, 'right': 9}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 50825.85, 'Total Cost': 50825.85, 'Plan Rows': 1499885, 'Plan Width': 23, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'customer', 'Alias': 'customer', 'Startup Cost': 0.0, 'Total Cost': 50825.85, 'Plan Rows': 1499885, 'Plan Width': 23, 'parent': 15, 'ID': 16}], 'parent': 6, 'ID': 15, 'left': 16}], 'parent': 5, 'ID': 6, 'left': 7, 'right': 15}], 'parent': 3, 'ID': 5, 'left': 6}], 'parent': 2, 'ID': 3, 'left': 4, 'right': 5}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+4,18,"-- Function Query Definition
+-- Approved February 1998
+
+
+select
+c_name,
+c_custkey,
+o_orderkey,
+o_orderdate,
+o_totalprice,
+sum(l_quantity)
+from
+customer,
+orders,
+lineitem
+where
+o_orderkey in (
+select
+l_orderkey
+from
+lineitem
+group by
+l_orderkey having
+sum(l_quantity) > 313
+)
+and c_custkey = o_custkey
+and o_orderkey = l_orderkey
+group by
+c_name,
+c_custkey,
+o_orderkey,
+o_orderdate,
+o_totalprice
+order by
+o_totalprice desc,
+o_orderdate limit 100;
+-- $ID$
+-- TPC-H/TPC-R Discounted Revenue ","{'Node Type': 'Limit', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 6708552.79, 'Total Cost': 6708555.79, 'Plan Rows': 100, 'Plan Width': 71, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Simple', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 6708552.79, 'Total Cost': 6724350.55, 'Plan Rows': 526592, 'Plan Width': 71, 'Group Key': ['orders.o_totalprice', 'orders.o_orderdate', 'customer.c_name', 'customer.c_custkey', 'orders.o_orderkey'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 6708552.79, 'Total Cost': 6709869.27, 'Plan Rows': 526592, 'Plan Width': 44, 'Sort Key': ['orders.o_totalprice DESC', 'orders.o_orderdate', 'customer.c_name', 'customer.c_custkey', 'orders.o_orderkey'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 4100671.01, 'Total Cost': 6642308.4, 'Plan Rows': 526592, 'Plan Width': 44, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_orderkey = orders.o_orderkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1724428.16, 'Plan Rows': 59988616, 'Plan Width': 9, 'parent': 3, 'ID': 4}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 4097867.21, 'Total Cost': 4097867.21, 'Plan Rows': 131664, 'Plan Width': 43, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3459164.82, 'Total Cost': 4097867.21, 'Plan Rows': 131664, 'Plan Width': 43, 'Inner Unique': False, 'Hash Cond': '(orders.o_custkey = customer.c_custkey)', 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3380801.41, 'Total Cost': 4007360.41, 'Plan Rows': 131664, 'Plan Width': 24, 'Inner Unique': True, 'Hash Cond': '(orders.o_orderkey = lineitem_1.l_orderkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'orders', 'Alias': 'orders', 'Startup Cost': 0.0, 'Total Cost': 410901.7, 'Plan Rows': 14998970, 'Plan Width': 20, 'parent': 7, 'ID': 8}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3378640.61, 'Total Cost': 3378640.61, 'Plan Rows': 131664, 'Plan Width': 4, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3273303.23, 'Total Cost': 3377323.97, 'Plan Rows': 131664, 'Plan Width': 4, 'Group Key': ['lineitem_1.l_orderkey'], 'Filter': ""(sum(lineitem_1.l_quantity) > '313'::numeric)"", 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3273303.23, 'Total Cost': 3365474.24, 'Plan Rows': 789982, 'Plan Width': 36, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 3272303.21, 'Total Cost': 3273290.69, 'Plan Rows': 394991, 'Plan Width': 36, 'Sort Key': ['lineitem_1.l_orderkey'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Hashed', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 2975753.22, 'Total Cost': 3224784.91, 'Plan Rows': 394991, 'Plan Width': 36, 'Group Key': ['lineitem_1.l_orderkey'], 'Planned Partitions': 32, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem_1', 'Startup Cost': 0.0, 'Total Cost': 1374494.57, 'Plan Rows': 24995257, 'Plan Width': 9, 'parent': 13, 'ID': 14}], 'parent': 12, 'ID': 13, 'left': 14}], 'parent': 11, 'ID': 12, 'left': 13}], 'parent': 10, 'ID': 11, 'left': 12}], 'parent': 9, 'ID': 10, 'left': 11}], 'parent': 7, 'ID': 9, 'left': 10}], 'parent': 6, 'ID': 7, 'left': 8, 'right': 9}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 50825.85, 'Total Cost': 50825.85, 'Plan Rows': 1499885, 'Plan Width': 23, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'customer', 'Alias': 'customer', 'Startup Cost': 0.0, 'Total Cost': 50825.85, 'Plan Rows': 1499885, 'Plan Width': 23, 'parent': 15, 'ID': 16}], 'parent': 6, 'ID': 15, 'left': 16}], 'parent': 5, 'ID': 6, 'left': 7, 'right': 15}], 'parent': 3, 'ID': 5, 'left': 6}], 'parent': 2, 'ID': 3, 'left': 4, 'right': 5}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+5,11,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+ps_partkey,
+sum(ps_supplycost * ps_availqty) as value
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'EGYPT'
+group by
+ps_partkey having
+sum(ps_supplycost * ps_availqty) > (
+select
+sum(ps_supplycost * ps_availqty) * 0.0000100000
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'EGYPT'
+)
+order by
+value desc ;
+-- $ID$
+-- TPC-H/TPC-R Shipping Modes and Order Priority ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 517534.29, 'Total Cost': 517800.95, 'Plan Rows': 106664, 'Plan Width': 36, 'Sort Key': ['(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) DESC'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parent Relationship': 'InitPlan', 'Subplan Name': 'InitPlan 1 (returns $1)', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.91, 'Total Cost': 226081.92, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.68, 'Total Cost': 226081.89, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 225081.68, 'Total Cost': 225081.69, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 10, 'Inner Unique': False, 'Hash Cond': '(partsupp_1.ps_suppkey = supplier_1.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp_1', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 14, 'parent': 4, 'ID': 5}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier_1.s_nationkey = nation_1.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier_1', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 7, 'ID': 8}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation_1', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'EGYPT'::bpchar)"", 'parent': 9, 'ID': 10}], 'parent': 7, 'ID': 9, 'left': 10}], 'parent': 6, 'ID': 7, 'left': 8, 'right': 9}], 'parent': 4, 'ID': 6, 'left': 7}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 6}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}, {'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 279625.48, 'Plan Rows': 106664, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Filter': '(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric)) > $1)', 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 272825.64, 'Plan Rows': 266660, 'Plan Width': 36, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 241046.43, 'Plan Rows': 133330, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 238046.51, 'Plan Rows': 133330, 'Plan Width': 14, 'Sort Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 14, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_suppkey = supplier.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 18, 'parent': 15, 'ID': 16}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier.s_nationkey = nation.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 18, 'ID': 19}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'EGYPT'::bpchar)"", 'parent': 20, 'ID': 21}], 'parent': 18, 'ID': 20, 'left': 21}], 'parent': 17, 'ID': 18, 'left': 19, 'right': 20}], 'parent': 15, 'ID': 17, 'left': 18}], 'parent': 14, 'ID': 15, 'left': 16, 'right': 17}], 'parent': 13, 'ID': 14, 'left': 15}], 'parent': 12, 'ID': 13, 'left': 14}], 'parent': 11, 'ID': 12, 'left': 13}], 'parent': 0, 'ID': 11, 'left': 12}], 'parent': None, 'ID': 0, 'left': 1, 'right': 11}"
+6,19,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+sum(l_extendedprice* (1 - l_discount)) as revenue
+from
+lineitem,
+part
+where
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#23'
+and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+and l_quantity >= 8 and l_quantity <= 8 + 10
+and p_size between 1 and 5
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#13'
+and p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+and l_quantity >= 19 and l_quantity <= 19 + 10
+and p_size between 1 and 10
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#23'
+and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+and l_quantity >= 26 and l_quantity <= 26 + 10
+and p_size between 1 and 15
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+) ;
+-- $ID$
+-- TPC-H/TPC-R Potential Part Promotion ","{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953632.51, 'Total Cost': 1953632.52, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953632.29, 'Total Cost': 1953632.5, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1952632.29, 'Total Cost': 1952632.3, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 76402.17, 'Total Cost': 1952628.82, 'Plan Rows': 462, 'Plan Width': 12, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_partkey = part.p_partkey)', 'Join Filter': '(((part.p_brand = \'Brand#23\'::bpchar) AND (part.p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'8\'::numeric) AND (lineitem.l_quantity <= \'18\'::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = \'Brand#13\'::bpchar) AND (part.p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (lineitem.l_quantity >= \'19\'::numeric) AND (lineitem.l_quantity <= \'29\'::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = \'Brand#23\'::bpchar) AND (part.p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'26\'::numeric) AND (lineitem.l_quantity <= \'36\'::numeric) AND (part.p_size <= 15)))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1874399.7, 'Plan Rows': 480441, 'Plan Width': 21, 'Filter': '((l_shipmode = ANY (\'{AIR,""AIR REG""}\'::bpchar[])) AND (l_shipinstruct = \'DELIVER IN PERSON\'::bpchar) AND (((l_quantity >= \'8\'::numeric) AND (l_quantity <= \'18\'::numeric)) OR ((l_quantity >= \'19\'::numeric) AND (l_quantity <= \'29\'::numeric)) OR ((l_quantity >= \'26\'::numeric) AND (l_quantity <= \'36\'::numeric))))', 'parent': 3, 'ID': 4}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 76377.36, 'Total Cost': 76377.36, 'Plan Rows': 1985, 'Plan Width': 30, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 76377.36, 'Plan Rows': 1985, 'Plan Width': 30, 'Filter': '((p_size >= 1) AND (((p_brand = \'Brand#23\'::bpchar) AND (p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (p_size <= 5)) OR ((p_brand = \'Brand#13\'::bpchar) AND (p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (p_size <= 10)) OR ((p_brand = \'Brand#23\'::bpchar) AND (p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (p_size <= 15))))', 'parent': 5, 'ID': 6}], 'parent': 3, 'ID': 5, 'left': 6}], 'parent': 2, 'ID': 3, 'left': 4, 'right': 5}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+7,8,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+o_year,
+sum(case
+when nation = 'ALGERIA' then volume
+else 0
+end) / sum(volume) as mkt_share
+from
+(
+select
+extract(year from o_orderdate) as o_year,
+l_extendedprice * (1 - l_discount) as volume,
+n2.n_name as nation
+from
+part,
+supplier,
+lineitem,
+orders,
+customer,
+nation n1,
+nation n2,
+region
+where
+p_partkey = l_partkey
+and s_suppkey = l_suppkey
+and l_orderkey = o_orderkey
+and o_custkey = c_custkey
+and c_nationkey = n1.n_nationkey
+and n1.n_regionkey = r_regionkey
+and r_name = 'AFRICA'
+and s_nationkey = n2.n_nationkey
+and o_orderdate between date '1995-01-01' and date '1996-12-31'
+and p_type = 'STANDARD PLATED NICKEL'
+) as all_nations
+group by
+o_year
+order by
+o_year ;
+-- $ID$
+-- TPC-H/TPC-R Product Type Profit Measure ","{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1955785.01, 'Total Cost': 1956486.84, 'Plan Rows': 2406, 'Plan Width': 64, 'Group Key': ['(EXTRACT(year FROM orders.o_orderdate))'], 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1955785.01, 'Total Cost': 1956408.65, 'Plan Rows': 2406, 'Plan Width': 96, 'Workers Planned': 1, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1954785.0, 'Total Cost': 1955137.96, 'Plan Rows': 2406, 'Plan Width': 96, 'Group Key': ['(EXTRACT(year FROM orders.o_orderdate))'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1954785.0, 'Total Cost': 1954819.54, 'Plan Rows': 13816, 'Plan Width': 70, 'Sort Key': ['(EXTRACT(year FROM orders.o_orderdate))'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1950527.96, 'Total Cost': 1953834.87, 'Plan Rows': 13816, 'Plan Width': 70, 'Inner Unique': False, 'Hash Cond': '(supplier.s_nationkey = n2.n_nationkey)', 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1950526.4, 'Total Cost': 1953608.79, 'Plan Rows': 13816, 'Plan Width': 20, 'Inner Unique': False, 'Hash Cond': '(supplier.s_suppkey = lineitem.l_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 5, 'ID': 6}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 1950404.06, 'Total Cost': 1950404.06, 'Plan Rows': 9787, 'Plan Width': 20, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1905498.74, 'Total Cost': 1950404.06, 'Plan Rows': 9787, 'Plan Width': 20, 'Inner Unique': False, 'Hash Cond': '(customer.c_nationkey = n1.n_nationkey)', 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1905496.2, 'Total Cost': 1950120.18, 'Plan Rows': 48932, 'Plan Width': 24, 'Inner Unique': False, 'Hash Cond': '(customer.c_custkey = orders.o_custkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'customer', 'Alias': 'customer', 'Startup Cost': 0.0, 'Total Cost': 42076.52, 'Plan Rows': 624952, 'Plan Width': 8, 'parent': 9, 'ID': 10}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 1904884.55, 'Total Cost': 1904884.55, 'Plan Rows': 48932, 'Plan Width': 24, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1523283.11, 'Total Cost': 1904884.55, 'Plan Rows': 48932, 'Plan Width': 24, 'Inner Unique': False, 'Hash Cond': '(orders.o_orderkey = lineitem.l_orderkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'orders', 'Alias': 'orders', 'Startup Cost': 0.0, 'Total Cost': 354655.56, 'Plan Rows': 1909064, 'Plan Width': 12, 'Filter': ""((o_orderdate >= '1995-01-01'::date) AND (o_orderdate <= '1996-12-31'::date))"", 'parent': 12, 'ID': 13}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 1520341.76, 'Total Cost': 1520341.76, 'Plan Rows': 160188, 'Plan Width': 20, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 51447.53, 'Total Cost': 1520341.76, 'Plan Rows': 160188, 'Plan Width': 20, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_partkey = part.p_partkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1374494.57, 'Plan Rows': 24995257, 'Plan Width': 24, 'parent': 15, 'ID': 16}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 51378.28, 'Total Cost': 51378.28, 'Plan Rows': 5540, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 51378.28, 'Plan Rows': 5540, 'Plan Width': 4, 'Filter': ""((p_type)::text = 'STANDARD PLATED NICKEL'::text)"", 'parent': 17, 'ID': 18}], 'parent': 15, 'ID': 17, 'left': 18}], 'parent': 14, 'ID': 15, 'left': 16, 'right': 17}], 'parent': 12, 'ID': 14, 'left': 15}], 'parent': 11, 'ID': 12, 'left': 13, 'right': 14}], 'parent': 9, 'ID': 11, 'left': 12}], 'parent': 8, 'ID': 9, 'left': 10, 'right': 11}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 2.47, 'Total Cost': 2.47, 'Plan Rows': 5, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.07, 'Total Cost': 2.47, 'Plan Rows': 5, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(n1.n_regionkey = region.r_regionkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'n1', 'Startup Cost': 0.0, 'Total Cost': 1.25, 'Plan Rows': 25, 'Plan Width': 8, 'parent': 20, 'ID': 21}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.06, 'Total Cost': 1.06, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'region', 'Alias': 'region', 'Startup Cost': 0.0, 'Total Cost': 1.06, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(r_name = 'AFRICA'::bpchar)"", 'parent': 22, 'ID': 23}], 'parent': 20, 'ID': 22, 'left': 23}], 'parent': 19, 'ID': 20, 'left': 21, 'right': 22}], 'parent': 8, 'ID': 19, 'left': 20}], 'parent': 7, 'ID': 8, 'left': 9, 'right': 19}], 'parent': 5, 'ID': 7, 'left': 8}], 'parent': 4, 'ID': 5, 'left': 6, 'right': 7}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.25, 'Total Cost': 1.25, 'Plan Rows': 25, 'Plan Width': 30, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'n2', 'Startup Cost': 0.0, 'Total Cost': 1.25, 'Plan Rows': 25, 'Plan Width': 30, 'parent': 24, 'ID': 25}], 'parent': 4, 'ID': 24, 'left': 25}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 24}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+8,16,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+p_brand,
+p_type,
+p_size,
+count(distinct ps_suppkey) as supplier_cnt
+from
+partsupp,
+part
+where
+p_partkey = ps_partkey
+and p_brand <> 'Brand#25'
+and p_type not like 'ECONOMY ANODIZED%'
+and p_size in (25, 3, 13, 41, 12, 26, 47, 37)
+and ps_suppkey not in (
+select
+s_suppkey
+from
+supplier
+where
+s_comment like '%Customer%Complaints%'
+)
+group by
+p_brand,
+p_type,
+p_size
+order by
+supplier_cnt desc,
+p_brand,
+p_type,
+p_size ;
+-- $ID$
+-- TPC-H/TPC-R Small-Quantity-Order Revenue ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 432399.47, 'Total Cost': 432787.37, 'Plan Rows': 155162, 'Plan Width': 44, 'Sort Key': ['(count(DISTINCT partsupp.ps_suppkey)) DESC', 'part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Simple', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 335849.25, 'Total Cost': 414247.85, 'Plan Rows': 155162, 'Plan Width': 44, 'Group Key': ['part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 335849.25, 'Total Cost': 406619.76, 'Plan Rows': 607647, 'Plan Width': 40, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 334849.23, 'Total Cost': 335482.2, 'Plan Rows': 253186, 'Plan Width': 40, 'Sort Key': ['part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 67831.98, 'Total Cost': 305199.49, 'Plan Rows': 253186, 'Plan Width': 40, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_partkey = part.p_partkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 3466.03, 'Total Cost': 219517.74, 'Plan Rows': 1666629, 'Plan Width': 8, 'Filter': '(NOT (hashed SubPlan 1))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'SubPlan', 'Subplan Name': 'SubPlan 1', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 3466.0, 'Plan Rows': 10, 'Plan Width': 4, 'Filter': ""((s_comment)::text ~~ '%Customer%Complaints%'::text)"", 'parent': 5, 'ID': 6}], 'parent': 4, 'ID': 5, 'left': 6}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 61794.56, 'Total Cost': 61794.56, 'Plan Rows': 126591, 'Plan Width': 40, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 61794.56, 'Plan Rows': 126591, 'Plan Width': 40, 'Filter': ""((p_brand <> 'Brand#25'::bpchar) AND ((p_type)::text !~~ 'ECONOMY ANODIZED%'::text) AND (p_size = ANY ('{25,3,13,41,12,26,47,37}'::integer[])))"", 'parent': 7, 'ID': 8}], 'parent': 4, 'ID': 7, 'left': 8}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 7}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+9,11,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+ps_partkey,
+sum(ps_supplycost * ps_availqty) as value
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'INDONESIA'
+group by
+ps_partkey having
+sum(ps_supplycost * ps_availqty) > (
+select
+sum(ps_supplycost * ps_availqty) * 0.0000100000
+from
+partsupp,
+supplier,
+nation
+where
+ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = 'INDONESIA'
+)
+order by
+value desc ;
+-- $ID$
+-- TPC-H/TPC-R Shipping Modes and Order Priority ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 517534.29, 'Total Cost': 517800.95, 'Plan Rows': 106664, 'Plan Width': 36, 'Sort Key': ['(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) DESC'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parent Relationship': 'InitPlan', 'Subplan Name': 'InitPlan 1 (returns $1)', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.91, 'Total Cost': 226081.92, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 226081.68, 'Total Cost': 226081.89, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 225081.68, 'Total Cost': 225081.69, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 10, 'Inner Unique': False, 'Hash Cond': '(partsupp_1.ps_suppkey = supplier_1.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp_1', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 14, 'parent': 4, 'ID': 5}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier_1.s_nationkey = nation_1.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier_1', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 7, 'ID': 8}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation_1', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'INDONESIA'::bpchar)"", 'parent': 9, 'ID': 10}], 'parent': 7, 'ID': 9, 'left': 10}], 'parent': 6, 'ID': 7, 'left': 8, 'right': 9}], 'parent': 4, 'ID': 6, 'left': 7}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 6}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}, {'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Finalize', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 279625.48, 'Plan Rows': 106664, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Filter': '(sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric)) > $1)', 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 238713.21, 'Total Cost': 272825.64, 'Plan Rows': 266660, 'Plan Width': 36, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 241046.43, 'Plan Rows': 133330, 'Plan Width': 36, 'Group Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 237713.18, 'Total Cost': 238046.51, 'Plan Rows': 133330, 'Plan Width': 14, 'Sort Key': ['partsupp.ps_partkey'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 3079.09, 'Total Cost': 224081.71, 'Plan Rows': 133330, 'Plan Width': 14, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_suppkey = supplier.s_suppkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 0.0, 'Total Cost': 207718.58, 'Plan Rows': 3333258, 'Plan Width': 18, 'parent': 15, 'ID': 16}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 3049.68, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 1.32, 'Total Cost': 3049.68, 'Plan Rows': 2353, 'Plan Width': 4, 'Inner Unique': False, 'Hash Cond': '(supplier.s_nationkey = nation.n_nationkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 2804.24, 'Plan Rows': 58824, 'Plan Width': 8, 'parent': 18, 'ID': 19}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1.31, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'nation', 'Alias': 'nation', 'Startup Cost': 0.0, 'Total Cost': 1.31, 'Plan Rows': 1, 'Plan Width': 4, 'Filter': ""(n_name = 'INDONESIA'::bpchar)"", 'parent': 20, 'ID': 21}], 'parent': 18, 'ID': 20, 'left': 21}], 'parent': 17, 'ID': 18, 'left': 19, 'right': 20}], 'parent': 15, 'ID': 17, 'left': 18}], 'parent': 14, 'ID': 15, 'left': 16, 'right': 17}], 'parent': 13, 'ID': 14, 'left': 15}], 'parent': 12, 'ID': 13, 'left': 14}], 'parent': 11, 'ID': 12, 'left': 13}], 'parent': 0, 'ID': 11, 'left': 12}], 'parent': None, 'ID': 0, 'left': 1, 'right': 11}"

@@ -1,0 +1,8 @@
+2025-03-26 14:29:51 - root - INFO: - Start Index Filter Experiment.
+2025-03-26 14:29:51 - root - INFO: - Create the directory `./cost_exp_res/new_exp_opt/logdir` to save experiment result.
+2025-03-26 14:29:51 - root - INFO: - Set the tensorboard logdir = `./cost_exp_res/new_exp_opt/logdir/`.
+2025-03-26 14:29:51 - root - INFO: - Set the random seed = `666`.
+2025-03-26 14:29:54 - root - INFO: - Load the train data from `/mnt/newpart/lizhaodonghui/index_candidate_generation/data/plan_raw_feat_train.json` (1742).
+2025-03-26 14:29:54 - root - INFO: - Load the valid data from `/mnt/newpart/lizhaodonghui/index_candidate_generation/data/plan_raw_feat_val.json` (193).
+2025-03-26 14:29:54 - root - INFO: - Start the training process of the model of RandomForest.
+2025-03-26 14:29:54 - root - INFO: - End the training process of the model of RandomForest.

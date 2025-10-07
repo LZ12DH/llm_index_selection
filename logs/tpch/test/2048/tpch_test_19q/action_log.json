@@ -1,0 +1,38 @@
+[
+    {
+        "action": "Selection Agent",
+        "output": [
+            "lineitem(l_orderkey)"
+        ],
+        "storage": 1328.6015625
+    },
+    {
+        "action": "Selection Agent",
+        "output": [
+            "lineitem(l_orderkey)",
+            "lineitem(l_shipdate)"
+        ],
+        "storage": 2657.203125
+    },
+    {
+        "action": "Revision Agent",
+        "output": [
+            "lineitem(l_orderkey)"
+        ],
+        "storage": 1328.6015625
+    },
+    {
+        "action": "Combination Agent",
+        "output": [
+            "lineitem(l_orderkey, l_shipdate, l_partkey)"
+        ],
+        "storage": 1992.90625
+    },
+    {
+        "action": "Combination Agent",
+        "output": [
+            "lineitem(l_orderkey, l_shipdate, l_partkey)"
+        ],
+        "storage": 1992.90625
+    }
+]

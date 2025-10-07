@@ -1,0 +1,6 @@
+[submodule "index_selection_evaluation"]
+	path = index_selection_evaluation
+	url = https://github.com/hyrise/index_selection_evaluation.git
+[submodule "qp_evaluation"]
+	path = qp_evaluation
+	url = https://github.com/zhaoyue-ntu/qp_evaluation.git

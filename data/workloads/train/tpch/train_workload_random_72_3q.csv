@@ -1,0 +1,119 @@
+,Query_id,Query_text,Plan_dump
+0,16,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+p_brand,
+p_type,
+p_size,
+count(distinct ps_suppkey) as supplier_cnt
+from
+partsupp,
+part
+where
+p_partkey = ps_partkey
+and p_brand <> 'Brand#51'
+and p_type not like 'PROMO BRUSHED%'
+and p_size in (38, 48, 15, 50, 43, 30, 47, 26)
+and ps_suppkey not in (
+select
+s_suppkey
+from
+supplier
+where
+s_comment like '%Customer%Complaints%'
+)
+group by
+p_brand,
+p_type,
+p_size
+order by
+supplier_cnt desc,
+p_brand,
+p_type,
+p_size ;
+-- $ID$
+-- TPC-H/TPC-R Small-Quantity-Order Revenue ","{'Node Type': 'Sort', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 431330.78, 'Total Cost': 431717.32, 'Plan Rows': 154614, 'Plan Width': 44, 'Sort Key': ['(count(DISTINCT partsupp.ps_suppkey)) DESC', 'part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Sorted', 'Partial Mode': 'Simple', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 335531.09, 'Total Cost': 413247.86, 'Plan Rows': 154614, 'Plan Width': 44, 'Group Key': ['part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Gather Merge', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 335531.09, 'Total Cost': 405678.73, 'Plan Rows': 602299, 'Plan Width': 40, 'Workers Planned': 2, 'Plans': [{'Node Type': 'Sort', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 334531.06, 'Total Cost': 335158.46, 'Plan Rows': 250958, 'Plan Width': 40, 'Sort Key': ['part.p_brand', 'part.p_type', 'part.p_size'], 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 67810.05, 'Total Cost': 305160.29, 'Plan Rows': 250958, 'Plan Width': 40, 'Inner Unique': False, 'Hash Cond': '(partsupp.ps_partkey = part.p_partkey)', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'partsupp', 'Alias': 'partsupp', 'Startup Cost': 3466.03, 'Total Cost': 219517.74, 'Plan Rows': 1666629, 'Plan Width': 8, 'Filter': '(NOT (hashed SubPlan 1))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'SubPlan', 'Subplan Name': 'SubPlan 1', 'Parallel Aware': False, 'Async Capable': False, 'Relation Name': 'supplier', 'Alias': 'supplier', 'Startup Cost': 0.0, 'Total Cost': 3466.0, 'Plan Rows': 10, 'Plan Width': 4, 'Filter': ""((s_comment)::text ~~ '%Customer%Complaints%'::text)"", 'parent': 5, 'ID': 6}], 'parent': 4, 'ID': 5, 'left': 6}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 61794.56, 'Total Cost': 61794.56, 'Plan Rows': 125477, 'Plan Width': 40, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 61794.56, 'Plan Rows': 125477, 'Plan Width': 40, 'Filter': ""((p_brand <> 'Brand#51'::bpchar) AND ((p_type)::text !~~ 'PROMO BRUSHED%'::text) AND (p_size = ANY ('{38,48,15,50,43,30,47,26}'::integer[])))"", 'parent': 7, 'ID': 8}], 'parent': 4, 'ID': 7, 'left': 8}], 'parent': 3, 'ID': 4, 'left': 5, 'right': 7}], 'parent': 2, 'ID': 3, 'left': 4}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+1,19,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+sum(l_extendedprice* (1 - l_discount)) as revenue
+from
+lineitem,
+part
+where
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#54'
+and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+and l_quantity >= 8 and l_quantity <= 8 + 10
+and p_size between 1 and 5
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#41'
+and p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+and l_quantity >= 20 and l_quantity <= 20 + 10
+and p_size between 1 and 10
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#44'
+and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+and l_quantity >= 28 and l_quantity <= 28 + 10
+and p_size between 1 and 15
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+) ;
+-- $ID$
+-- TPC-H/TPC-R Potential Part Promotion ","{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953636.72, 'Total Cost': 1953636.73, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953636.5, 'Total Cost': 1953636.71, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1952636.5, 'Total Cost': 1952636.51, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 76401.91, 'Total Cost': 1952633.05, 'Plan Rows': 460, 'Plan Width': 12, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_partkey = part.p_partkey)', 'Join Filter': '(((part.p_brand = \'Brand#54\'::bpchar) AND (part.p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'8\'::numeric) AND (lineitem.l_quantity <= \'18\'::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = \'Brand#41\'::bpchar) AND (part.p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (lineitem.l_quantity >= \'20\'::numeric) AND (lineitem.l_quantity <= \'30\'::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = \'Brand#44\'::bpchar) AND (part.p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'28\'::numeric) AND (lineitem.l_quantity <= \'38\'::numeric) AND (part.p_size <= 15)))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1874399.7, 'Plan Rows': 481696, 'Plan Width': 21, 'Filter': '((l_shipmode = ANY (\'{AIR,""AIR REG""}\'::bpchar[])) AND (l_shipinstruct = \'DELIVER IN PERSON\'::bpchar) AND (((l_quantity >= \'8\'::numeric) AND (l_quantity <= \'18\'::numeric)) OR ((l_quantity >= \'20\'::numeric) AND (l_quantity <= \'30\'::numeric)) OR ((l_quantity >= \'28\'::numeric) AND (l_quantity <= \'38\'::numeric))))', 'parent': 3, 'ID': 4}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 76377.36, 'Total Cost': 76377.36, 'Plan Rows': 1964, 'Plan Width': 30, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 76377.36, 'Plan Rows': 1964, 'Plan Width': 30, 'Filter': '((p_size >= 1) AND (((p_brand = \'Brand#54\'::bpchar) AND (p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (p_size <= 5)) OR ((p_brand = \'Brand#41\'::bpchar) AND (p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (p_size <= 10)) OR ((p_brand = \'Brand#44\'::bpchar) AND (p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (p_size <= 15))))', 'parent': 5, 'ID': 6}], 'parent': 3, 'ID': 5, 'left': 6}], 'parent': 2, 'ID': 3, 'left': 4, 'right': 5}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
+2,19,"-- Functional Query Definition
+-- Approved February 1998
+
+
+select
+sum(l_extendedprice* (1 - l_discount)) as revenue
+from
+lineitem,
+part
+where
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#51'
+and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+and l_quantity >= 3 and l_quantity <= 3 + 10
+and p_size between 1 and 5
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#44'
+and p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+and l_quantity >= 15 and l_quantity <= 15 + 10
+and p_size between 1 and 10
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+)
+or
+(
+p_partkey = l_partkey
+and p_brand = 'Brand#51'
+and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+and l_quantity >= 23 and l_quantity <= 23 + 10
+and p_size between 1 and 15
+and l_shipmode in ('AIR', 'AIR REG')
+and l_shipinstruct = 'DELIVER IN PERSON'
+) ;
+-- $ID$
+-- TPC-H/TPC-R Potential Part Promotion ","{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Finalize', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953633.04, 'Total Cost': 1953633.05, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Gather', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1953632.82, 'Total Cost': 1953633.03, 'Plan Rows': 2, 'Plan Width': 32, 'Workers Planned': 2, 'Single Copy': False, 'Plans': [{'Node Type': 'Aggregate', 'Strategy': 'Plain', 'Partial Mode': 'Partial', 'Parent Relationship': 'Outer', 'Parallel Aware': False, 'Async Capable': False, 'Startup Cost': 1952632.82, 'Total Cost': 1952632.83, 'Plan Rows': 1, 'Plan Width': 32, 'Plans': [{'Node Type': 'Hash Join', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Join Type': 'Inner', 'Startup Cost': 76402.03, 'Total Cost': 1952629.36, 'Plan Rows': 460, 'Plan Width': 12, 'Inner Unique': False, 'Hash Cond': '(lineitem.l_partkey = part.p_partkey)', 'Join Filter': '(((part.p_brand = \'Brand#51\'::bpchar) AND (part.p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'3\'::numeric) AND (lineitem.l_quantity <= \'13\'::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = \'Brand#44\'::bpchar) AND (part.p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (lineitem.l_quantity >= \'15\'::numeric) AND (lineitem.l_quantity <= \'25\'::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = \'Brand#51\'::bpchar) AND (part.p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (lineitem.l_quantity >= \'23\'::numeric) AND (lineitem.l_quantity <= \'33\'::numeric) AND (part.p_size <= 15)))', 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'lineitem', 'Alias': 'lineitem', 'Startup Cost': 0.0, 'Total Cost': 1874399.7, 'Plan Rows': 480666, 'Plan Width': 21, 'Filter': '((l_shipmode = ANY (\'{AIR,""AIR REG""}\'::bpchar[])) AND (l_shipinstruct = \'DELIVER IN PERSON\'::bpchar) AND (((l_quantity >= \'3\'::numeric) AND (l_quantity <= \'13\'::numeric)) OR ((l_quantity >= \'15\'::numeric) AND (l_quantity <= \'25\'::numeric)) OR ((l_quantity >= \'23\'::numeric) AND (l_quantity <= \'33\'::numeric))))', 'parent': 3, 'ID': 4}, {'Node Type': 'Hash', 'Parent Relationship': 'Inner', 'Parallel Aware': True, 'Async Capable': False, 'Startup Cost': 76377.36, 'Total Cost': 76377.36, 'Plan Rows': 1974, 'Plan Width': 30, 'Plans': [{'Node Type': 'Seq Scan', 'Parent Relationship': 'Outer', 'Parallel Aware': True, 'Async Capable': False, 'Relation Name': 'part', 'Alias': 'part', 'Startup Cost': 0.0, 'Total Cost': 76377.36, 'Plan Rows': 1974, 'Plan Width': 30, 'Filter': '((p_size >= 1) AND (((p_brand = \'Brand#51\'::bpchar) AND (p_container = ANY (\'{""SM CASE"",""SM BOX"",""SM PACK"",""SM PKG""}\'::bpchar[])) AND (p_size <= 5)) OR ((p_brand = \'Brand#44\'::bpchar) AND (p_container = ANY (\'{""MED BAG"",""MED BOX"",""MED PKG"",""MED PACK""}\'::bpchar[])) AND (p_size <= 10)) OR ((p_brand = \'Brand#51\'::bpchar) AND (p_container = ANY (\'{""LG CASE"",""LG BOX"",""LG PACK"",""LG PKG""}\'::bpchar[])) AND (p_size <= 15))))', 'parent': 5, 'ID': 6}], 'parent': 3, 'ID': 5, 'left': 6}], 'parent': 2, 'ID': 3, 'left': 4, 'right': 5}], 'parent': 1, 'ID': 2, 'left': 3}], 'parent': 0, 'ID': 1, 'left': 2}], 'parent': None, 'ID': 0, 'left': 1}"
